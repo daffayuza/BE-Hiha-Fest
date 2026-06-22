@@ -1,0 +1,50 @@
+﻿Environment variables loaded from .env
+Prisma schema loaded from prisma\schema.prisma
+npx : 
+At line:1 char:1
++ npx prisma validate 2>&1 
+| Out-File -Encoding utf8 
+out.txt
++ ~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo         
+     : NotSpecified: (:St  
+  ring) [], RemoteExcept   
+ ion
+    + FullyQualifiedErrorI 
+   d : NativeCommandError
+ 
+Error: Prisma schema 
+validation - (validate 
+wasm)
+Error code: P1012
+[1;91merror[0m: 
+[1mError validating field 
+`ticketCategory` in model 
+`Transaction`: The 
+relation field 
+`ticketCategory` on model 
+`Transaction` is missing 
+an opposite relation field 
+on the model 
+`TicketCategory`. Either 
+run `prisma format` or add 
+it manually.[0m
+  [1;94m-->[0m  [4mprism
+a\schema.prisma:63[0m
+[1;94m   | [0m
+[1;94m62 | [0m  
+ticketCategoryId String
+[1;94m63 | [0m  
+[1;91mticketCategory   
+TicketCategory    
+@relation(fields: 
+[ticketCategoryId], 
+references: [id])[0m
+[1;94m64 | [0m  quantity 
+        Int
+[1;94m   | [0m
+
+Validation Error Count: 1
+[Context: validate]
+
+Prisma CLI Version : 5.22.0
