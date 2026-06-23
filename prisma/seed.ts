@@ -4,13 +4,25 @@ import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 async function main() {
-  // 1. Create Admin
+  // 1. Create Admin Accounts
   const adminPassword = await bcrypt.hash('admin123', 10);
+
+  // Create first admin account
   await prisma.admin.upsert({
     where: { email: 'admin@hahahihifest.com' },
     update: {},
     create: {
       email: 'admin@hahahihifest.com',
+      password: adminPassword,
+    },
+  });
+
+  // Create second admin account
+  await prisma.admin.upsert({
+    where: { email: 'admin@gmail.com' },
+    update: {},
+    create: {
+      email: 'admin@gmail.com',
       password: adminPassword,
     },
   });

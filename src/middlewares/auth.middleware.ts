@@ -15,6 +15,6 @@ export const adminAuth = (req: Request, res: Response, next: NextFunction) => {
     (req as any).admin = decoded;
     next();
   } catch (error) {
-    res.status(400).json({ message: 'Invalid token.' });
+    res.status(401).json({ message: 'Invalid or expired token.' });
   }
 };
