@@ -38,6 +38,8 @@ export const createCheckout = async (req: Request, res: Response) => {
         data: {
           orderNumber,
           concertId,
+          ticketCategoryId, // Added missing field
+          quantity,        // Added missing field
           buyerName,
           buyerEmail,
           buyerPhone,
