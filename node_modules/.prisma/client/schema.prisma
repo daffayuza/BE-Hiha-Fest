@@ -67,6 +67,7 @@ model Transaction {
   buyerEmail       String
   buyerPhone       String
   totalPrice       Float
+  snapToken        String?
   status           TransactionStatus @default(PENDING)
   tickets          Ticket[]
   createdAt        DateTime          @default(now())

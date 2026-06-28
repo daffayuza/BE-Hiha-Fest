@@ -1,5 +1,13 @@
 import { Request, Response } from 'express';
 import prisma from '../config/prisma';
+import midtransClient from 'midtrans-client';
+
+// Initialize Midtrans Snap client
+const snap = new midtransClient.Snap({
+  isProduction: process.env.MIDTRANS_IS_PRODUCTION === 'true',
+  serverKey: process.env.MIDTRANS_SERVER_KEY || '',
+  clientKey: process.env.MIDTRANS_CLIENT_KEY || '',
+});
 
 export const createCheckout = async (req: Request, res: Response) => {
   try {
@@ -38,8 +46,8 @@ export const createCheckout = async (req: Request, res: Response) => {
         data: {
           orderNumber,
           concertId,
-          ticketCategoryId, // Added missing field
-          quantity,        // Added missing field
+          ticketCategoryId,
+          quantity,
           buyerName,
           buyerEmail,
           buyerPhone,
@@ -49,12 +57,47 @@ export const createCheckout = async (req: Request, res: Response) => {
       });
     });
 
+    // 3. Create Midtrans Snap Token
+    const midtransParameter = {
+      transaction_details: {
+        order_id: transaction.orderNumber,
+        gross_amount: totalPrice,
+      },
+      item_details: [
+        {
+          id: ticketCategory.id,
+          price: ticketCategory.price,
+          quantity: quantity,
+          name: `${ticketCategory.event.name} - ${ticketCategory.name}`,
+        },
+      ],
+      customer_details: {
+        first_name: buyerName,
+        email: buyerEmail,
+        phone: buyerPhone,
+      },
+    };
+
+    const snapResponse = await snap.createTransaction(midtransParameter);
+
+    // 4. Save snapToken to the transaction
+    await prisma.transaction.update({
+      where: { id: transaction.id },
+      data: { snapToken: snapResponse.token },
+    });
+
     res.status(201).json({
       message: 'Checkout successful. Proceed to payment.',
-      transaction
+      transaction: {
+        ...transaction,
+        snapToken: snapResponse.token,
+      },
+      snapToken: snapResponse.token,
+      clientKey: process.env.MIDTRANS_CLIENT_KEY,
     });
 
   } catch (error: any) {
+    console.error('Checkout error:', error);
     res.status(500).json({ message: error.message || 'Error creating checkout', error });
   }
 };

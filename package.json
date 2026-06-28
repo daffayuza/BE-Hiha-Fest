@@ -21,6 +21,7 @@
     "dotenv": "latest",
     "express": "latest",
     "jsonwebtoken": "latest",
+    "midtrans-client": "^1.4.3",
     "nodemailer": "latest",
     "qrcode": "latest"
   },

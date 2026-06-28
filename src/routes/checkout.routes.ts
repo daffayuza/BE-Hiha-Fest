@@ -1,11 +1,16 @@
 import { Router } from 'express';
 import { createCheckout, orderLookup } from '../controllers/checkout.controller';
-import { handlePaymentWebhook } from '../controllers/payment.controller';
+import { handleMidtransNotification, handlePaymentStatus } from '../controllers/payment.controller';
 
 const router = Router();
 
 router.post('/', createCheckout);
 router.get('/lookup', orderLookup);
-router.post('/webhook', handlePaymentWebhook);
+
+// Midtrans webhook notification endpoint
+router.post('/webhook/midtrans', handleMidtransNotification);
+
+// Frontend: check payment status after Snap popup closes
+router.get('/status/:orderNumber', handlePaymentStatus);
 
 export default router;
